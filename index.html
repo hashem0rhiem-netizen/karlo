@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KARLO STORE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+body{
+margin:0;
+font-family:'Cairo';
+background:#05070a;
+color:white;
+}
+
+header{
+text-align:center;
+padding:15px;
+border-bottom:2px solid #00d2ff;
+}
+
+.logo{
+font-size:28px;
+font-weight:bold;
+color:#00d2ff;
+}
+
+.nav{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:10px;
+background:#111;
+position:sticky;
+top:0;
+}
+
+.nav button{
+padding:10px;
+border:none;
+border-radius:10px;
+background:#222;
+color:#ccc;
+cursor:pointer;
+}
+
+.nav button.active{
+background:#00d2ff;
+color:black;
+}
+
+.section{display:none;padding:15px}
+.section.active{display:block}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:10px;
+}
+
+.card{
+background:#111;
+padding:10px;
+border-radius:10px;
+text-align:center;
+}
+
+.price{
+color:#00d2ff;
+font-weight:bold;
+margin:5px 0;
+}
+
+button.buy{
+width:100%;
+padding:8px;
+border:none;
+border-radius:8px;
+background:linear-gradient(45deg,#00d2ff,#9d50bb);
+color:white;
+cursor:pointer;
+}
+
+img{
+width:100%;
+border-radius:10px;
+margin-bottom:8px;
+}
+
+/* 🔥 زر الأدمن الأخضر */
+.admin-btn{
+position:fixed;
+top:10px;
+left:10px;
+background:#25d366;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 0 10px rgba(37,211,102,0.4);
+transition:0.3s;
+}
+
+.admin-btn:hover{
+transform:scale(1.05);
+}
+
+#admin{
+display:none;
+background:#111;
+margin:15px;
+padding:15px;
+border-radius:10px;
+}
+
+input{
+width:100%;
+padding:8px;
+margin:5px 0;
+border-radius:8px;
+border:none;
+}
