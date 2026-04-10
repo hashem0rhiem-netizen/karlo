@@ -46,7 +46,7 @@ color:#ccc;
 cursor:pointer;
 }
 
-.nav button.active{
+.nav button.active{
 background:#00d2ff;
 color:black;
 }
@@ -124,3 +124,160 @@ margin:5px 0;
 border-radius:8px;
 border:none;
 }
+
+/* 🛡️ منع التحديد */
+*{
+user-select:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">KARLO STORE 🔥</div>
+</header>
+
+<div class="nav">
+<button class="active" onclick="show('games')">الشحن</button>
+<button onclick="show('accounts')">الحسابات</button>
+</div>
+
+<!-- 🎮 الشحن -->
+<div id="games" class="section active">
+<h3>🎮 فري فاير</h3>
+
+<div class="grid">
+<div class="card">
+<h4>110💎</h4>
+<div class="price">12.5 د.ل</div>
+<button class="buy" onclick="order('FF','110💎','12.5')">طلب</button>
+</div>
+</div>
+</div>
+
+<!-- 👤 الحسابات -->
+<div id="accounts" class="section">
+<h3>👤 الحسابات</h3>
+<div class="grid" id="accBox"></div>
+</div>
+
+<!-- 🔐 لوحة التحكم -->
+<div id="admin">
+<h3>لوحة التحكم 🔐</h3>
+
+<input id="name" placeholder="اسم الحساب">
+<input id="price" placeholder="السعر">
+<input type="file" id="img" accept="image/*">
+
+<button class="buy" onclick="addAccount()">إضافة حساب</button>
+</div>
+
+<!-- 🔥 زر الأدمن -->
+<button class="admin-btn" onclick="openAdmin()">🔐 Admin</button>
+
+<script>
+
+let accounts = JSON.parse(localStorage.getItem("acc")) || [];
+
+/* 🚫 منع الكليك يمين */
+document.addEventListener('contextmenu', function(e){
+e.preventDefault();
+alert("❌ غير مسموح");
+});
+
+/* 🚫 منع اختصارات */
+document.addEventListener('keydown', function(e){
+
+if(e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i')){
+e.preventDefault();
+alert("❌ محظور");
+}
+
+});
+
+/* تنقل */
+function show(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+/* طلب واتساب */
+function order(game,item,price){
+let id = prompt("أدخل ID:");
+if(id){
+window.location.href =
+`https://wa.me/218934551020?text=${game} ${item} بـ ${price} د.ل ID:${id}`;
+}
+}
+
+/* كلمة السر */
+const PASS = "K@RLO-STORE-2026-ULTRA99";
+
+/* فتح الأدمن */
+function openAdmin(){
+let p = prompt("🔐 كلمة السر:");
+if(p === PASS){
+document.getElementById("admin").style.display="block";
+alert("تم الدخول 🔥");
+}else{
+alert("خطأ ❌");
+}
+}
+
+/* إضافة حساب + صورة */
+function addAccount(){
+
+let name = document.getElementById("name").value;
+let price = document.getElementById("price").value;
+let file = document.getElementById("img").files[0];
+
+if(!name || !price || !file){
+return alert("❌ املأ كل البيانات");
+}
+
+let reader = new FileReader();
+
+reader.onload = function(){
+
+accounts.push({
+name,
+price,
+img:reader.result
+});
+
+localStorage.setItem("acc",JSON.stringify(accounts));
+render();
+
+alert("✅ تم إضافة الحساب");
+}
+
+reader.readAsDataURL(file);
+}
+
+/* عرض الحسابات */
+function render(){
+
+let box = document.getElementById("accBox");
+box.innerHTML="";
+
+accounts.forEach(a=>{
+box.innerHTML += `
+<div class="card">
+<img src="${a.img}">
+<h4>${a.name}</h4>
+<div class="price">${a.price} د.ل</div>
+<button class="buy">شراء</button>
+</div>
+`;
+});
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
