@@ -8,128 +8,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-body{
-margin:0;
-font-family:'Cairo';
-background:#05070a;
-color:white;
-}
+body{margin:0;font-family:'Cairo';background:#05070a;color:white;}
+header{text-align:center;padding:15px;border-bottom:2px solid #00d2ff;}
+.logo{font-size:28px;font-weight:bold;color:#00d2ff;}
 
-header{
-text-align:center;
-padding:15px;
-border-bottom:2px solid #00d2ff;
-}
-
-.logo{
-font-size:28px;
-font-weight:bold;
-color:#00d2ff;
-}
-
-.nav{
-display:flex;
-justify-content:center;
-gap:10px;
-padding:10px;
-background:#111;
-position:sticky;
-top:0;
-}
-
-.nav button{
-padding:10px;
-border:none;
-border-radius:10px;
-background:#222;
-color:#ccc;
-cursor:pointer;
-}
-
-.nav button.active{
-background:#00d2ff;
-color:black;
-}
+.nav{display:flex;justify-content:center;gap:10px;padding:10px;background:#111;position:sticky;top:0;}
+.nav button{padding:10px;border:none;border-radius:10px;background:#222;color:#ccc;cursor:pointer;}
+.nav button.active{background:#00d2ff;color:black;}
 
 .section{display:none;padding:15px}
 .section.active{display:block}
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-gap:10px;
-}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
 
-.card{
-background:#111;
-padding:10px;
-border-radius:10px;
-text-align:center;
-}
+.card{background:#111;padding:10px;border-radius:10px;text-align:center;transition:0.3s;}
+.card:hover{transform:translateY(-5px);box-shadow:0 0 15px #00d2ff;}
 
-.price{
-color:#00d2ff;
-font-weight:bold;
-margin:5px 0;
-}
+.price{color:#00d2ff;font-weight:bold;margin:5px 0;}
 
-button.buy{
-width:100%;
-padding:8px;
-border:none;
-border-radius:8px;
-background:linear-gradient(45deg,#00d2ff,#9d50bb);
-color:white;
-cursor:pointer;
-}
+button.buy{width:100%;padding:8px;border:none;border-radius:8px;background:linear-gradient(45deg,#00d2ff,#9d50bb);color:white;cursor:pointer;}
 
-img{
-width:100%;
-border-radius:10px;
-margin-bottom:8px;
-}
+img{width:100%;border-radius:10px;margin-bottom:8px;}
 
-/* 🔥 زر الأدمن الأخضر */
-.admin-btn{
-position:fixed;
-top:10px;
-left:10px;
-background:#25d366;
-color:white;
-border:none;
-padding:10px 15px;
-border-radius:8px;
-font-weight:bold;
-cursor:pointer;
-box-shadow:0 0 10px rgba(37,211,102,0.4);
-transition:0.3s;
-}
+.admin-btn{position:fixed;top:10px;left:10px;background:#25d366;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;}
 
-.admin-btn:hover{
-transform:scale(1.05);
-}
+#admin{display:none;background:#111;margin:15px;padding:15px;border-radius:10px;}
 
-#admin{
-display:none;
-background:#111;
-margin:15px;
-padding:15px;
-border-radius:10px;
-}
-
-input{
-width:100%;
-padding:8px;
-margin:5px 0;
-border-radius:8px;
-border:none;
-}
-
-/* 🛡️ منع التحديد */
-*{
-user-select:none;
-}
-
+input{width:100%;padding:8px;margin:5px 0;border-radius:8px;border:none;}
 </style>
 </head>
 
@@ -140,125 +45,122 @@ user-select:none;
 </header>
 
 <div class="nav">
-<button class="active" onclick="show('games')">الشحن</button>
-<button onclick="show('accounts')">الحسابات</button>
+<button class="active" onclick="show('games',this)">الشحن</button>
+<button onclick="show('accounts',this)">الحسابات</button>
 </div>
 
 <!-- 🎮 الشحن -->
 <div id="games" class="section active">
-<h3>🎮 فري فاير</h3>
-
-<div class="grid">
-<div class="card">
-<h4>110💎</h4>
-<div class="price">12.5 د.ل</div>
-<button class="buy" onclick="order('FF','110💎','12.5')">طلب</button>
-</div>
-</div>
+<div class="grid" id="gamesBox"></div>
 </div>
 
 <!-- 👤 الحسابات -->
 <div id="accounts" class="section">
-<h3>👤 الحسابات</h3>
 <div class="grid" id="accBox"></div>
 </div>
 
 <!-- 🔐 لوحة التحكم -->
 <div id="admin">
+
 <h3>لوحة التحكم 🔐</h3>
 
+<h4>➕ إضافة شحن</h4>
+<button onclick="addGame()">إضافة لعبة</button>
+
+<h4>👤 إضافة حساب</h4>
 <input id="name" placeholder="اسم الحساب">
 <input id="price" placeholder="السعر">
-<input type="file" id="img" accept="image/*">
+<input type="file" id="img">
+<button class="buy" onclick="addAccount()">إضافة</button>
 
-<button class="buy" onclick="addAccount()">إضافة حساب</button>
+<h4>📦 طلبات الشحن</h4>
+<div id="ordersBox"></div>
+
 </div>
 
-<!-- 🔥 زر الأدمن -->
-<button class="admin-btn" onclick="openAdmin()">🔐 Admin</button>
+<button class="admin-btn" onclick="openAdmin()">🔐</button>
 
 <script>
 
+/* بيانات */
 let accounts = JSON.parse(localStorage.getItem("acc")) || [];
+let games = JSON.parse(localStorage.getItem("games")) || [
+{ name:"Free Fire", price:12.5, img:"https://i.imgur.com/4Qy7FqF.jpg" }
+];
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
 
-/* 🚫 منع الكليك يمين */
-document.addEventListener('contextmenu', function(e){
-e.preventDefault();
-alert("❌ غير مسموح");
-});
-
-/* 🚫 منع اختصارات */
-document.addEventListener('keydown', function(e){
-
-if(e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i')){
-e.preventDefault();
-alert("❌ محظور");
-}
-
-});
+const PASS = atob("S0BSTC1TVE9SRS0yMDI2LVVMVFJBOTk=");
 
 /* تنقل */
-function show(id){
+function show(id,btn){
 document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
 document.getElementById(id).classList.add('active');
 }
 
-/* طلب واتساب */
-function order(game,item,price){
-let id = prompt("أدخل ID:");
-if(id){
-window.location.href =
-`https://wa.me/218934551020?text=${game} ${item} بـ ${price} د.ل ID:${id}`;
-}
-}
-
-/* كلمة السر */
-const PASS = "K@RLO-STORE-2026-ULTRA99";
-
 /* فتح الأدمن */
 function openAdmin(){
-let p = prompt("🔐 كلمة السر:");
-if(p === PASS){
+let p = prompt("كلمة السر:");
+if(p===PASS){
 document.getElementById("admin").style.display="block";
-alert("تم الدخول 🔥");
-}else{
-alert("خطأ ❌");
-}
+renderAdmin();
+}else alert("خطأ ❌");
 }
 
-/* إضافة حساب + صورة */
-function addAccount(){
+/* 🎮 عرض الألعاب */
+function renderGames(){
+let box = document.getElementById("gamesBox");
+box.innerHTML="";
 
-let name = document.getElementById("name").value;
-let price = document.getElementById("price").value;
-let file = document.getElementById("img").files[0];
-
-if(!name || !price || !file){
-return alert("❌ املأ كل البيانات");
+games.forEach((g,i)=>{
+box.innerHTML += `
+<div class="card" onclick="openGame(${i})">
+<img src="${g.img}">
+<h4>${g.name}</h4>
+</div>
+`;
+});
 }
 
-let reader = new FileReader();
+/* 💎 نظام الشحن */
+function openGame(i){
+let g = games[i];
 
-reader.onload = function(){
+let qty = prompt(`شحن ${g.name}\nالسعر: ${g.price}\nكم الكمية؟`);
+if(!qty) return;
 
-accounts.push({
-name,
-price,
-img:reader.result
+let total = qty * g.price;
+
+if(!confirm(`المجموع: ${total} د.ل`)) return;
+
+let id = prompt("ادخل ID");
+if(!id) return;
+
+alert(`حول على:
+مدار: 0934551020
+ليبيانا: 0922131336
+بايننس: 1138421583`);
+
+let num = prompt("اكتب الرقم اللي حولت منه");
+if(!num) return;
+
+orders.push({
+game:g.name,
+qty,
+total,
+id,
+num,
+status:"pending"
 });
 
-localStorage.setItem("acc",JSON.stringify(accounts));
-render();
+localStorage.setItem("orders",JSON.stringify(orders));
 
-alert("✅ تم إضافة الحساب");
+alert("⏳ جاري التحقق...");
 }
 
-reader.readAsDataURL(file);
-}
-
-/* عرض الحسابات */
-function render(){
-
+/* 👤 الحسابات */
+function renderAccounts(){
 let box = document.getElementById("accBox");
 box.innerHTML="";
 
@@ -268,14 +170,82 @@ box.innerHTML += `
 <img src="${a.img}">
 <h4>${a.name}</h4>
 <div class="price">${a.price} د.ل</div>
-<button class="buy">شراء</button>
+<button class="buy" onclick="buyAcc('${a.name}','${a.price}')">شراء</button>
 </div>
 `;
 });
-
 }
 
-render();
+/* 📲 واتساب */
+function buyAcc(name,price){
+let msg = `اريد شراء حساب\nالاسم: ${name}\nالسعر: ${price} د.ل`;
+window.location.href =
+`https://wa.me/218934551020?text=${encodeURIComponent(msg)}`;
+}
+
+/* 🔐 لوحة الأدمن */
+function renderAdmin(){
+let box = document.getElementById("ordersBox");
+box.innerHTML="";
+
+orders.forEach((o,i)=>{
+if(o.status==="pending"){
+box.innerHTML += `
+<div class="card">
+<h4>${o.game}</h4>
+<p>ID: ${o.id}</p>
+<p>المبلغ: ${o.total}</p>
+<button onclick="approve(${i})">✅ موافقة</button>
+</div>
+`;
+}
+});
+}
+
+/* ✅ موافقة */
+function approve(i){
+orders[i].status="done";
+localStorage.setItem("orders",JSON.stringify(orders));
+alert("تم الشحن ✅");
+renderAdmin();
+}
+
+/* ➕ إضافة حساب */
+function addAccount(){
+let name = document.getElementById("name").value;
+let price = document.getElementById("price").value;
+let file = document.getElementById("img").files[0];
+
+if(!name || !price || !file) return alert("❌ املأ البيانات");
+
+let reader = new FileReader();
+
+reader.onload = function(){
+accounts.push({name,price,img:reader.result});
+localStorage.setItem("acc",JSON.stringify(accounts));
+renderAccounts();
+alert("تمت الإضافة ✅");
+}
+
+reader.readAsDataURL(file);
+}
+
+/* ➕ إضافة لعبة */
+function addGame(){
+let name = prompt("اسم اللعبة");
+let price = prompt("السعر");
+let img = prompt("رابط الصورة");
+
+if(!name || !price || !img) return;
+
+games.push({name,price,img});
+localStorage.setItem("games",JSON.stringify(games));
+renderGames();
+}
+
+/* تشغيل */
+renderGames();
+renderAccounts();
 
 </script>
 
